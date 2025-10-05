@@ -17,43 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include QMK_KEYBOARD_H
-
 #include "quantum.h"
-
-/*
-#include "qk_tap_dance.h" 
-// --- タップダンスの定義ここから ---
-
-// 1. タップダンスに名前を付けます
-enum {
-  TD_LAYER_ONE_TWO = 0
-};
-
-// 2. タップダンスの動作を定義する関数
-void layer_tilde_finished(qk_tap_dance_state_t *state, void *user_data) {
-  if (state->count == 1) {
-    // 1回タップの時の動作: Escキーを送信
-    register_code(MO(2));
-  } else if (state->count == 2) {
-    // 2回タップの時の動作: Shift + ` (チルダ) を送信
-    register_code(MO(1));
-  }
-}
-
-void layer_tilde_reset(qk_tap_dance_state_t *state, void *user_data) {
-  // キーを離したときに、押したキーを離す処理
-  unregister_code(MO(1));
-  unregister_code(MO(2));
-}
-
-// 3. 上記の動作を、付けた名前に紐付けます
-qk_tap_dance_action_t tap_dance_actions[] = {
-  [TD_LAYER_ONE_TWO] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, layer_tilde_finished, layer_tilde_reset)
-};
-
-// --- タップダンスの定義ここまで ---
-*/
-
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -86,15 +50,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_NO  , KC_NO  , _______  , _______  , _______  , _______  ,      KC_LNG1  , _______  , _______  , _______  , KC_NO  , KC_NO
   ),
 };
-// clang-format on
-
-/*
-layer_state_t layer_state_set_user(layer_state_t state) {
-    // Auto enable scroll mode when the highest layer is 3
-    keyball_set_scroll_mode(get_highest_layer(state) == 3);
-    return state;
-}
-*/
 
 #ifdef OLED_ENABLE
 
@@ -134,11 +89,31 @@ layer_state_t layer_state_set_user(layer_state_t state) {
             add_mods(MOD_LSFT | MOD_LGUI);
             rgblight_sethsv_noeeprom(HSV_MAGENTA);
             break;
-        default:
-            // On any layer other than the Shift+Cmd one, make sure to clear the modifier keys
-            del_mods(MOD_LSFT | MOD_LGUI);
-            break;
     }
     return state;
 }
 #endif
+
+// This function runs on every keyboard matrix scan.
+void matrix_scan_user(void) {
+  // This line calls led_update_user and passes the current LED state.
+  led_update_user(host_keyboard_led_state()); 
+}
+
+bool led_update_user(led_t led_state) {
+    uint8_t mods = get_mods();
+
+    if (mods & MOD_MASK_SHIFT) { // while Shift is held
+        rgblight_sethsv_noeeprom(HSV_CYAN);
+
+    } else if (mods & MOD_MASK_CTRL) { // while Ctrl is held
+        rgblight_sethsv_noeeprom(HSV_RED);
+
+    } else if (mods & MOD_MASK_GUI) { // Command/Win key
+        rgblight_sethsv_noeeprom(HSV_PURPLE);
+    } else {
+        // If no modifier keys are pressed, revert to the layer color.
+        layer_state_set_user(layer_state);
+    }
+    return true;
+}
