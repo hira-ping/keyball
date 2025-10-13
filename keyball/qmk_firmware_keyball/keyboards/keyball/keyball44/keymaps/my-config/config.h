@@ -47,3 +47,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RGB_LED_NUM 12
 
 #define TAPPING_TERM 200
+
+#define COMBO_TERM 50
