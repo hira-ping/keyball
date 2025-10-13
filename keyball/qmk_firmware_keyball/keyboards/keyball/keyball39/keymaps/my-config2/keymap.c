@@ -22,11 +22,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // --- Start of combo definitions ---
 
 // 1. Define the keys for the combo.
-const uint16_t PROGMEM enter_combo[] = {KC_J, KC_K, COMBO_END};
+const uint16_t PROGMEM enter_combo[] = {KC_V, KC_M, COMBO_END};
+const uint16_t PROGMEM del_combo[] = {KC_I, KC_O, COMBO_END};
+
 
 // 2. Define the combo key combination and the action it triggers.
 combo_t key_combos[] = {
     COMBO(enter_combo, KC_ENT),
+    COMBO(del_combo, KC_DEL),
 };
 
 // --- End of combo definitions ---
@@ -38,7 +41,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     MT(MOD_RCTL, KC_Q)     , KC_W     , KC_E     , KC_R     , KC_T     ,                            KC_Y     , KC_U     , KC_I     , KC_O     , KC_P     ,
     KC_A     , KC_S     , KC_D     , KC_F     , KC_G     ,                            KC_H     , KC_J     , KC_K     , KC_L     , KC_BTN1  ,
     MT(MOD_RSFT,KC_Z)    , MT(MOD_RGUI,KC_X)     ,MT(MOD_RCTL,KC_C)     , KC_V     , KC_B     ,                            KC_N     , KC_M     , MT(MOD_LCTL, KC_COMM), MT(MOD_RGUI,KC_DOT), MT(MOD_RSFT, KC_BTN2)  ,
-    MO(1)  , KC_ESC , KC_LALT  ,KC_BSPC, LT(2, KC_SPC) ,KC_TAB,  LT(1, KC_LNG2), MO(2), KC_NO, KC_NO ,KC_NO, MO(3)
+    MO(1)  , KC_ESC , KC_LALT  ,KC_BSPC, MO(2) ,KC_TAB,  LT(1, KC_LNG2), LT(2, KC_SPC) , KC_NO, KC_NO ,KC_NO, MO(3)
   ),
 
   [1] = LAYOUT_universal(
@@ -112,8 +115,10 @@ bool led_update_user(led_t led_state) {
 
     if (mods & MOD_MASK_SHIFT) { // while Shift is held
         rgblight_sethsv_noeeprom(128, 255, 128);
+
     } else if (mods & MOD_MASK_CTRL) { // while Ctrl is held
-        rgblight_sethsv_noeeprom(0, 225, 255);
+        rgblight_sethsv_noeeprom(0, 225, 128);
+
     } else if (mods & MOD_MASK_GUI) { // Command/Win key
         rgblight_sethsv_noeeprom(213, 255, 128);
     } else if (mods & MOD_MASK_ALT) { // Command/Win key
